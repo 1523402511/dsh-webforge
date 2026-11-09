@@ -1,58 +1,37 @@
-# dsh-webforge
+# library/ — webforge 自带起步库
 
-把本机已有的网页素材库变成 DSH 工具：搜库、读设计体系、拼初稿、把 deck 打成 PDF。
+插件随包带的**最小可用素材库**，让「装完就能跑」成立：不装任何外部库，四个工具也都有真实产物可看。
 
-**它不打包任何素材**——运行时只读你本机 `eac-design-world` 里的 `vendor/open-design`。所以这个仓库只有几百行代码。
+目录结构刻意与真实库一致（`vendor/open-design/catalog.json` + 条目目录），所以 `plugin.mjs` 不需要为它写第二套读取逻辑。
 
-## 安装
+## 内容
 
-```bash
-# 从本仓库的压缩包装（不需要 git clone）
-dsh plugin --profile <你的profile> add https://codeload.github.com/<owner>/dsh-webforge/tar.gz/refs/heads/main
-```
+| 类型 | 数量 | 是什么 |
+|---|---:|---|
+| 网站模板 | 4 | 落地页、运营看板、文档页、定价页 |
+| deck | 2 | 董事会预读（6 页）、产品发布稿（5 页） |
+| 设计体系 | 2 | Paper & Ink（暖纸编辑感）、Deep Ocean（深色技术） |
+| 技能 | 2 | 落地页文案提纲、演示稿提纲 |
 
-或在 DSH 的插件面板里填这个 tarball 地址。装完重启一次 DSH。
+全部为本仓库自写，**MIT**，不含任何上游素材。页面按 `D:\dsh\design-rules\WEB-DESIGN-RULES.md` 写过一遍，`page` 剖面 floor 0。
 
-> `dsh plugin` 不能管理 Electron 独占的 `desktop` profile；那种情况下请用应用内的插件面板。
+## 这不是完整库
 
-## 它给的是什么
+完整库是 176 个模板 / 77 个 deck / 152 套体系 / 153 个技能（约 139 MB），来自 [OpenDesign](https://github.com/nexu-io/open-design) 的本地快照，**不随本仓库分发**。视频动效模板（`kind: motion`）不在 webforge 的收录范围内。
 
-| 工具 | 作用 |
-|---|---|
-| `webforge_search` | 搜 176 个网站模板 / 81 个 deck 演示稿 / 152 套设计体系 / 169 个技能 / 94 个动效参考 |
-| `webforge_read` | 读某一条的正文：模板入口 HTML、体系 `tokens.css` + `DESIGN.md`、技能 `SKILL.md` |
-| `webforge_build` | 模板 + 体系 + 标题 → 拼一份能打开的初稿，落盘并返回「改了什么、跳过了什么」 |
-| `webforge_export` | deck / 页面按指定尺寸打 PDF（默认 1280×720，16:9），返回页数与体积 |
+有完整库时插件优先用它，找不到才落到这里：
 
-外加一段系统提示：用户说「做个网页 / 官网 / 落地页 / 看板 / PPT / 演示稿」时，先搜库再动手。
+1. `WEBFORGE_LIB` 环境变量指向含 `vendor/open-design/catalog.json` 的目录
+2. 与本包同级的 `eac-design-world`（同一 profile 的 `node_modules`）
+3. `~/.dsh/profiles/<名字>/node_modules/eac-design-world`
+4. 本目录（兜底）
 
-## 数据从哪来
+## 两处说明
 
-只读 `eac-design-world` 的 `vendor/open-design/catalog.json` 与其引用的文件。不复制、不改写源库；产物写到 `D:\dsh\网站\<标题>-<时间>\`。
+- **deck 的固定宽度**：每页 `width: 1280px`，会被 design-rules 的 `fixed-width` 判为 reflex。这是 16:9 deck 的必需条件（导出 PDF 要固定页尺寸），按规范第 2 节「海报式单页」处理，保留并在此说明理由。
+- **文案是演示内容**：公司名、数字、引述都是示例，替换成真实材料时按规范第 5 节，不编事实、缺数据写占位符。
 
-定位顺序：`WEBFORGE_LIB` 环境变量 → 本包同级目录的 `eac-design-world` → `~/.dsh/profiles/desktop/node_modules/eac-design-world`。
+## 改这里的规则
 
-## 诚实边界
-
-`webforge_build` 产出的是**版式 + 体系的初稿**，不是成品：
-
-- 只换 `<title>` / `meta description` / 首个 `<h1>`，注入 `tokens.css`，再做有护栏的保守换色
-- 不改结构、不写文案；模板自带的示例数据仍在
-- 换色是启发式的：明暗极性相反、对比度不过关、只出现一次的反白，都会跳过并在 `patches` 里写明原因
-- `webforge_export` 转不出可编辑的 `.pptx`：HTML deck 里没有 PowerPoint 的文本框/表格语义，要可编辑只能重建
-
-## 自检
-
-```bash
-node tools/check.mjs
-```
-
-用假 ctx 注册 4 个工具，实测搜索 → 读取 → 拼装 → 导出四条链路，产物写到临时目录后自动清理。
-
-## 许可
-
-本仓库代码 MIT。运行时读取的素材库归各上游项目所有（`nexu-io/open-design` 为 Apache-2.0，条目逐条标注 MIT / Apache-2.0 / CC-BY-4.0），本仓库不再分发它们。
-
-## 卸载
-
-从 profile 的依赖与 bundle 列表里移除本包，或 `dsh plugin --profile <你的profile> remove dsh-webforge`，重启即可。插件没有常驻进程、不联网。
+- 新增条目：放目录 → 在 `vendor/open-design/catalog.json` 加一条（字段形状照现有条目）→ 跑 `node tools/check.mjs --bundled`
+- 改完记得跑 `node tools/validate.mjs`，别让工具 schema 回归

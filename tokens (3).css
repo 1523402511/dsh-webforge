@@ -1,0 +1,48 @@
+/* Paper & Ink —— 暖纸底 + 墨黑字 + 赭石强调，编辑感。
+   变量名与 open-design 体系一致；值取自 design-rules 的色板约束（浅底不限制具体值，深色值受第 4.5 节约束）。 */
+:root {
+  --bg: #fbf9f4;
+  --surface: #ffffff;
+  --surface-warm: #f1e6d6;
+  --surface-muted: #f4f1e9;
+  --fg: #14161a;
+  --fg-muted: #5a5f66;
+  --accent: #b4552d;
+  --accent-ink: #ffffff;
+  --border: #e3ded2;
+  --border-strong: #c9c2b4;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  --font-sans: "Geist", "Noto Sans SC", system-ui, sans-serif;
+  --font-serif: "Noto Serif SC", Georgia, serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Noto Sans Mono", monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+  --text-6xl: 60px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 64px;
+  --space-10: 80px;
+  --space-11: 96px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

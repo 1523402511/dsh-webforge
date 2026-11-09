@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Northwind · 月末对账 15 分钟收口</title>
+<meta name="description" content="Northwind 把银行流水、发票与账套三方对齐，月末对账从半天压到 15 分钟。示例页面，数据为演示用。" />
+<meta property="og:image" content="./og.png" />
+<style>
+  /* 起步库模板：单文件、无外部依赖。色值 6 个，字号/间距/圆角全部取自 design-rules 的数值表。
+     文案是演示内容，替换时按规范第 5 节：不编事实，缺数据写占位符。 */
+  :root {
+    --ink: #14161a;
+    --ink-muted: #5a5f66;
+    --paper: #fbf9f4;
+    --surface: #ffffff;
+    --line: #e3ded2;
+    --accent: #2f6feb;
+    --on-accent: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #fbf9f4;
+    color: #14161a;
+    font-family: "Geist", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+  h1, h2, h3 { margin: 0; font-weight: 600; line-height: 1.2; }
+  h1 { font-size: 48px; letter-spacing: 0; }
+  h2 { font-size: 36px; }
+  h3 { font-size: 24px; }
+  p { margin: 0; }
+  .muted { color: var(--ink-muted); font-size: 14px; line-height: 1.7; }
+
+  header.site {
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .bar { display: flex; align-items: center; gap: 32px; min-height: 64px; }
+  .brand { font-size: 20px; font-weight: 600; margin-right: auto; }
+  .nav { display: flex; gap: 24px; font-size: 16px; }
+  .nav a { color: var(--ink); text-decoration: none; }
+  .nav a:hover { color: var(--accent); }
+
+  .btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--accent);
+  }
+  .btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--line); }
+  .btn:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .hero { padding: 96px 0 80px; }
+  .hero h1 { max-width: 640px; }
+  .hero .lede { margin-top: 24px; max-width: 640px; font-size: 18px; line-height: 1.75; color: var(--ink-muted); }
+  .actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .proof { margin-top: 24px; }
+
+  section.band { padding: 80px 0; background: var(--surface); border-top: 1px solid var(--line); }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 40px; }
+  .card { padding: 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+  .card h3 { font-size: 20px; }
+  .card p { margin-top: 8px; color: var(--ink-muted); font-size: 16px; line-height: 1.75; }
+
+  ol.steps { margin: 40px 0 0; padding: 0; list-style: none; display: grid; gap: 24px; }
+  ol.steps li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: start; }
+  .num { font-size: 30px; font-weight: 600; color: var(--accent); line-height: 1; font-variant-numeric: tabular-nums; }
+  ol.steps p { margin-top: 4px; color: var(--ink-muted); }
+
+  .cta { padding: 64px 0; }
+  .cta-panel { padding: 48px; border-radius: 24px; background: var(--ink); color: var(--paper); }
+  .cta-panel h2 { color: var(--paper); }
+  .cta-panel p { margin-top: 8px; color: var(--paper); }
+  .cta-panel .btn { margin-top: 24px; background: var(--paper); color: var(--ink); border-color: var(--paper); }
+
+  footer.site { padding: 32px 0; border-top: 1px solid var(--line); background: var(--surface); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 36px; }
+    .hero { padding: 64px 0; }
+    .nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap bar">
+      <span class="brand">Northwind</span>
+      <nav class="nav" aria-label="主导航">
+        <a href="#features">功能</a>
+        <a href="#how">怎么用</a>
+        <a href="#pricing">定价</a>
+      </nav>
+      <a class="btn" href="#start">预约演示</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <h1>月末对账，15 分钟收口。</h1>
+        <p class="lede">银行流水、发票、账套三方自动对齐，差异逐条列出来由人拍板。财务不用再拉六个表格手工核。</p>
+        <div class="actions">
+          <a class="btn" href="#start">预约 30 分钟演示</a>
+          <a class="btn ghost" href="#features">先看它怎么对</a>
+        </div>
+        <p class="muted proof">演示数据：已接入 1,204 家企业的账套，平均每月处理 38 万条流水。</p>
+      </div>
+    </section>
+
+    <section class="band" id="features">
+      <div class="wrap">
+        <h2>三件事，替代原来的三张表</h2>
+        <div class="grid3">
+          <article class="card">
+            <h3>三方对齐</h3>
+            <p>流水按金额、日期、对手方模糊匹配发票与凭证，匹配不上的进差异池，不静默吞掉。</p>
+          </article>
+          <article class="card">
+            <h3>差异分级</h3>
+            <p>金额差、时间差、科目差分开列，每条给出建议处理方式，财务只做判断不做翻找。</p>
+          </article>
+          <article class="card">
+            <h3>留痕可回滚</h3>
+            <p>每次调整记一条变更，谁改的、改前改后都在，月底复盘不用再翻聊天记录。</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="band" id="how" style="background: var(--paper);">
+      <div class="wrap">
+        <h2>上线只要三步</h2>
+        <ol class="steps">
+          <li><span class="num">01</span><div><h3>导出一份账套</h3><p>支持从现有 ERP 导出 CSV 或 Excel，字段对不上时给映射界面。</p></div></li>
+          <li><span class="num">02</span><div><h3>跑一次历史对账</h3><p>拿上个月的数据试跑，看差异池能不能解释清楚，再决定是否切换。</p></div></li>
+          <li><span class="num">03</span><div><h3>固定每月流程</h3><p>月底自动拉数、自动对账，财务只在差异池里做确认。</p></div></li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="cta" id="start">
+      <div class="wrap">
+        <div class="cta-panel">
+          <h2>下个月的对账，先跑一轮看看</h2>
+          <p>带一份脱敏的账套来，30 分钟给你看清差异池长什么样。</p>
+          <a class="btn" href="mailto:demo@example.com">预约演示</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site">
+    <div class="wrap bar">
+      <span class="brand">Northwind</span>
+      <p class="muted">示例页面 · 起步库模板 · MIT</p>
+    </div>
+  </footer>
+</body>
+</html>

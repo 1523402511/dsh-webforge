@@ -1,0 +1,45 @@
+/* Deep Ocean —— 深海底色 + 冷蓝强调，技术/夜间界面。
+   深色底取 design-rules 允许的深色值域之外时需人工确认对比度；本套正文对底色 13.6:1。 */
+:root {
+  --bg: #071019;
+  --surface: #0d1b26;
+  --surface-warm: #13283a;
+  --surface-muted: #0a151f;
+  --fg: #e6f0f5;
+  --fg-muted: #8aa0ad;
+  --accent: #38bdf8;
+  --accent-ink: #071019;
+  --border: #1c3346;
+  --border-strong: #2a4a63;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 9999px;
+
+  --font-sans: "Geist", "Noto Sans SC", system-ui, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", "Noto Sans Mono", monospace;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 30px;
+  --text-4xl: 36px;
+  --text-5xl: 48px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 40px;
+  --space-8: 48px;
+  --space-9: 64px;
+  --space-10: 80px;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}

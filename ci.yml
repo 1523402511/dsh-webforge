@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # 不需要外部素材库：用包内起步库，纯 Node + 无导出，跑得最快
+  schema-and-bundled:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 工具 schema 校验
+        run: node tools/validate.mjs
+      - name: 用包内起步库跑四个工具（跳过 PDF）
+        run: node tools/check.mjs --bundled --no-export
+
+  # 完整链路：Windows runner 自带 Edge，能真的把 deck 打成 PDF 并核对页数
+  full-pipeline:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: 工具 schema 校验
+        run: node tools/validate.mjs
+      - name: 搜索 → 读取 → 拼初稿 → 导出 PDF（起步库）
+        run: node tools/check.mjs --bundled

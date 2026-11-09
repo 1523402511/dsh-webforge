@@ -1,7 +1,7 @@
 {
   "name": "dsh-webforge",
-  "version": "0.1.0",
-  "description": "把本地网页素材库（176 模板 / 152 体系 / 169 技能 / 94 动效）做成 DSH 工具：搜库、读设计体系、拼初稿。零依赖，只读源库。",
+  "version": "0.3.0",
+  "description": "把网页素材库做成本地 DSH 工具：搜库、读设计体系、拼初稿、把 deck 打成 PDF。零依赖，只读源库；没装完整库时用包内起步库。",
   "type": "module",
   "main": "./plugin.mjs",
   "exports": {
@@ -24,7 +24,9 @@
   "files": [
     "plugin.mjs",
     "cordis.patch.yml",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md",
+    "library"
   ],
   "dsh": {
     "bundle": {

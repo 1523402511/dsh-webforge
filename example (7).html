@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>定价 · 按席位，不按调用量</title>
+<meta name="description" content="定价页模板：三档方案、功能对照表与常见问题。把价格换成你的，别留占位符。" />
+<meta property="og:image" content="./og.png" />
+<style>
+  /* 定价页：三档卡片，中间一档高亮。色值 7 个，除了强调色全部中性。 */
+  :root {
+    --ink: #14161a;
+    --ink-muted: #5a5f66;
+    --paper: #fbf9f4;
+    --surface: #ffffff;
+    --line: #e3ded2;
+    --accent: #2f6feb;
+    --on-accent: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #fbf9f4;
+    color: #14161a;
+    font-family: "Geist", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  header.site { border-bottom: 1px solid var(--line); background: var(--surface); }
+  .bar { display: flex; align-items: center; gap: 32px; min-height: 64px; }
+  .brand { font-size: 20px; font-weight: 600; margin-right: auto; }
+  .nav { display: flex; gap: 24px; }
+  .nav a { color: var(--ink); text-decoration: none; }
+  .nav a:hover { color: var(--accent); }
+  .nav a:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .intro { padding: 80px 0 48px; text-align: left; }
+  h1 { margin: 0; font-size: 48px; font-weight: 600; line-height: 1.2; }
+  .intro p { margin-top: 16px; max-width: 640px; color: var(--ink-muted); font-size: 18px; }
+
+  .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; padding-bottom: 80px; }
+  .plan { display: flex; flex-direction: column; padding: 32px 24px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+  .plan.featured { border-color: var(--accent); }
+  .plan h2 { margin: 0; font-size: 24px; font-weight: 600; }
+  .plan .price { margin-top: 16px; font-size: 48px; font-weight: 600; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .plan .unit { font-size: 14px; color: var(--ink-muted); }
+  .plan ul { margin: 24px 0 32px; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 16px; }
+  .plan li::before { content: "—"; margin-right: 8px; color: var(--accent); }
+  .plan .btn { margin-top: auto; }
+  .btn { display: inline-block; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); color: var(--ink); font-size: 16px; font-weight: 600; text-align: center; text-decoration: none; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+
+  section.compare { padding: 64px 0; background: var(--surface); border-top: 1px solid var(--line); }
+  h2.section { margin: 0 0 24px; font-size: 36px; font-weight: 600; line-height: 1.2; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { padding: 12px 12px 12px 0; text-align: left; border-bottom: 1px solid var(--line); }
+  th { font-size: 14px; font-weight: 600; color: var(--ink-muted); }
+  td.num { font-variant-numeric: tabular-nums; }
+
+  .faq { padding: 80px 0; }
+  .faq dl { margin: 24px 0 0; display: grid; gap: 24px; max-width: 720px; }
+  .faq dt { font-weight: 600; }
+  .faq dd { margin: 4px 0 0; color: var(--ink-muted); }
+
+  @media (max-width: 640px) {
+    h1 { font-size: 36px; }
+    .nav { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap bar">
+      <span class="brand">Northwind</span>
+      <nav class="nav" aria-label="主导航">
+        <a href="#">功能</a>
+        <a href="#">定价</a>
+        <a href="#">文档</a>
+      </nav>
+      <a class="btn" href="#">免费试用</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="wrap">
+        <h1>按席位收费，不按调用量。</h1>
+        <p>对账跑多少次都是同一个价。三档方案只差权限和工作流数量，核心对账引擎三档一致。</p>
+      </div>
+    </section>
+
+    <section class="wrap plans">
+      <article class="plan">
+        <h2>单人</h2>
+        <p class="price">¥ 199<span class="unit"> / 月</span></p>
+        <ul>
+          <li>1 个席位</li>
+          <li>每月 3 套账</li>
+          <li>差异池与导出</li>
+        </ul>
+        <a class="btn" href="#">开始试用</a>
+      </article>
+
+      <article class="plan featured">
+        <h2>团队</h2>
+        <p class="price">¥ 599<span class="unit"> / 月</span></p>
+        <ul>
+          <li>5 个席位</li>
+          <li>不限账套数量</li>
+          <li>审批流与变更留痕</li>
+          <li>对接现有 ERP</li>
+        </ul>
+        <a class="btn primary" href="#">预约演示</a>
+      </article>
+
+      <article class="plan">
+        <h2>企业</h2>
+        <p class="price">按需报价</p>
+        <ul>
+          <li>不限席位</li>
+          <li>私有部署</li>
+          <li>审计日志与 SLA</li>
+        </ul>
+        <a class="btn" href="#">联系我们</a>
+      </article>
+    </section>
+
+    <section class="compare">
+      <div class="wrap">
+        <h2 class="section">三档到底差什么</h2>
+        <table>
+          <thead><tr><th scope="col">能力</th><th scope="col">单人</th><th scope="col">团队</th><th scope="col">企业</th></tr></thead>
+          <tbody>
+            <tr><td>三方对账引擎</td><td>有</td><td>有</td><td>有</td></tr>
+            <tr><td>差异池与批量处理</td><td>有</td><td>有</td><td>有</td></tr>
+            <tr><td>审批流</td><td>—</td><td>有</td><td>有</td></tr>
+            <tr><td>私有部署</td><td>—</td><td>—</td><td>有</td></tr>
+            <tr><td>审计日志保留</td><td class="num">90 天</td><td class="num">1 年</td><td class="num">自定义</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="faq">
+      <div class="wrap">
+        <h2 class="section">常见问题</h2>
+        <dl>
+          <dt>换套餐会丢历史数据吗？</dt>
+          <dd>不丢。降档后历史账套只读，不删除；重新升档即可继续用。</dd>
+          <dt>能开发票吗？</dt>
+          <dd>可以，下单时填抬头与税号，电子发票 3 个工作日内发到邮箱。</dd>
+          <dt>对账结果有争议怎么办？</dt>
+          <dd>每条差异都记录了匹配依据与操作人，可以导出成核对单，双方对着签字。</dd>
+        </dl>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

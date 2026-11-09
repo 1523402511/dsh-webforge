@@ -1,0 +1,205 @@
+{
+  "$comment": "webforge starter library index. Field shape mirrors a subset of eac-design-world's open-design catalog.json. All entries are written in this repository under MIT; no upstream assets. The full library wins when present (see findLibrary in plugin.mjs).",
+  "templates": [
+    {
+      "id": "wf-landing-aurora",
+      "kind": "website",
+      "slug": "aurora-landing",
+      "title": { "zh-CN": "对账产品落地页", "en": "Reconciliation landing page" },
+      "titleI18n": { "zh-CN": "对账产品落地页", "en": "Reconciliation landing page" },
+      "description": "Single-file marketing landing: hero, three proof cards, three-step onboarding, closing CTA. Use when the brief asks for a landing page, product page or marketing site.",
+      "tags": ["starter", "landing", "marketing", "saas"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/templates/aurora-landing/example.html",
+        "url": "/vendor/open-design/templates/aurora-landing/example.html"
+      },
+      "path": "vendor/open-design/templates/aurora-landing",
+      "files": ["vendor/open-design/templates/aurora-landing/example.html"],
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "wf-dashboard-pulse",
+      "kind": "website",
+      "slug": "pulse-dashboard",
+      "title": { "zh-CN": "运营看板", "en": "Operations dashboard" },
+      "titleI18n": { "zh-CN": "运营看板", "en": "Operations dashboard" },
+      "description": "Admin / analytics dashboard: left sidebar, KPI cards, 30-day revenue chart, accounts table and recent events. Use for dashboard, admin, analytics or control panel screens.",
+      "tags": ["starter", "dashboard", "admin", "analytics"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/templates/pulse-dashboard/example.html",
+        "url": "/vendor/open-design/templates/pulse-dashboard/example.html"
+      },
+      "path": "vendor/open-design/templates/pulse-dashboard",
+      "files": ["vendor/open-design/templates/pulse-dashboard/example.html"],
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "wf-docs-page",
+      "kind": "website",
+      "slug": "docs-page",
+      "title": { "zh-CN": "文档页", "en": "Documentation page" },
+      "titleI18n": { "zh-CN": "文档页", "en": "Documentation page" },
+      "description": "Documentation page with sticky left nav, prose column, code blocks and a parameter table. Use for docs, guides, API reference and internal handbooks.",
+      "tags": ["starter", "docs", "documentation", "guide"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/templates/docs-page/example.html",
+        "url": "/vendor/open-design/templates/docs-page/example.html"
+      },
+      "path": "vendor/open-design/templates/docs-page",
+      "files": ["vendor/open-design/templates/docs-page/example.html"],
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "wf-pricing-page",
+      "kind": "website",
+      "slug": "pricing-page",
+      "title": { "zh-CN": "定价页", "en": "Pricing page" },
+      "titleI18n": { "zh-CN": "定价页", "en": "Pricing page" },
+      "description": "Pricing page: three plans with one highlighted, feature comparison table and FAQ. Use when the brief asks for pricing, plans or a tier comparison.",
+      "tags": ["starter", "pricing", "plan", "saas"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/templates/pricing-page/example.html",
+        "url": "/vendor/open-design/templates/pricing-page/example.html"
+      },
+      "path": "vendor/open-design/templates/pricing-page",
+      "files": ["vendor/open-design/templates/pricing-page/example.html"],
+      "width": 1440,
+      "height": 900
+    },
+    {
+      "id": "wf-deck-decision",
+      "kind": "deck",
+      "slug": "decision-deck",
+      "title": { "zh-CN": "董事会预读", "en": "Board pre-read" },
+      "titleI18n": { "zh-CN": "董事会预读", "en": "Board pre-read" },
+      "description": "Six-slide decision deck: cover, three figures, diagnosis, plan, metrics, and the one thing to approve. 16:9 with print CSS, exports one section per page.",
+      "tags": ["starter", "deck", "board", "decision"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/decks/decision-deck/example.html",
+        "url": "/vendor/open-design/decks/decision-deck/example.html"
+      },
+      "path": "vendor/open-design/decks/decision-deck",
+      "files": ["vendor/open-design/decks/decision-deck/example.html"],
+      "width": 1280,
+      "height": 720
+    },
+    {
+      "id": "wf-deck-launch",
+      "kind": "deck",
+      "slug": "launch-deck",
+      "title": { "zh-CN": "产品发布稿", "en": "Product launch deck" },
+      "titleI18n": { "zh-CN": "产品发布稿", "en": "Product launch deck" },
+      "description": "Five-slide launch deck: cover, three capabilities, before/after comparison, customer quote and call to action. 16:9 with print CSS.",
+      "tags": ["starter", "deck", "launch", "product"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "entry": {
+        "exists": true,
+        "path": "vendor/open-design/decks/launch-deck/example.html",
+        "url": "/vendor/open-design/decks/launch-deck/example.html"
+      },
+      "path": "vendor/open-design/decks/launch-deck",
+      "files": ["vendor/open-design/decks/launch-deck/example.html"],
+      "width": 1280,
+      "height": 720
+    }
+  ],
+  "designSystems": [
+    {
+      "id": "wf-ds-paper-ink",
+      "slug": "paper-ink",
+      "name": "Paper & Ink",
+      "title": { "zh-CN": "纸与墨", "en": "Paper & Ink" },
+      "description": "Warm paper background, ink text, rust accent. Editorial and calm; built for long-form reading and reports, not for dense dashboards.",
+      "tags": ["starter", "editorial", "warm", "minimal"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "path": "vendor/open-design/design-systems/paper-ink",
+      "tokensCss": "vendor/open-design/design-systems/paper-ink/tokens.css",
+      "colors": [
+        { "name": "--bg", "value": "#fbf9f4" },
+        { "name": "--surface", "value": "#ffffff" },
+        { "name": "--surface-warm", "value": "#f1e6d6" },
+        { "name": "--fg", "value": "#14161a" },
+        { "name": "--muted", "value": "#5a5f66" },
+        { "name": "--accent", "value": "#b4552d" },
+        { "name": "--border", "value": "#e3ded2" }
+      ],
+      "fonts": { "families": ["Geist", "Noto Sans SC", "Noto Serif SC"] },
+      "files": [
+        "vendor/open-design/design-systems/paper-ink/tokens.css",
+        "vendor/open-design/design-systems/paper-ink/DESIGN.md"
+      ]
+    },
+    {
+      "id": "wf-ds-deep-ocean",
+      "slug": "deep-ocean",
+      "name": "Deep Ocean",
+      "title": { "zh-CN": "深海", "en": "Deep Ocean" },
+      "description": "Near-black blue background, cool cyan accent, thin borders. Built for technical products, night consoles and developer tools.",
+      "tags": ["starter", "dark", "tech", "minimal"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "path": "vendor/open-design/design-systems/deep-ocean",
+      "tokensCss": "vendor/open-design/design-systems/deep-ocean/tokens.css",
+      "colors": [
+        { "name": "--bg", "value": "#071019" },
+        { "name": "--surface", "value": "#0d1b26" },
+        { "name": "--surface-warm", "value": "#13283a" },
+        { "name": "--fg", "value": "#e6f0f5" },
+        { "name": "--muted", "value": "#8aa0ad" },
+        { "name": "--accent", "value": "#38bdf8" },
+        { "name": "--border", "value": "#1c3346" }
+      ],
+      "fonts": { "families": ["Geist", "Noto Sans SC"] },
+      "files": [
+        "vendor/open-design/design-systems/deep-ocean/tokens.css",
+        "vendor/open-design/design-systems/deep-ocean/DESIGN.md"
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "id": "wf-skill-landing-brief",
+      "slug": "landing-brief",
+      "title": { "zh-CN": "落地页文案提纲", "en": "Landing page brief" },
+      "description": "Turn a vague landing page request into a one-goal brief with structure, proof and CTA before writing HTML.",
+      "tags": ["starter", "copy", "landing"],
+      "triggers": ["落地页", "官网", "landing page"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "path": "vendor/open-design/skills/landing-brief",
+      "files": ["vendor/open-design/skills/landing-brief/SKILL.md"]
+    },
+    {
+      "id": "wf-skill-deck-outline",
+      "slug": "deck-outline",
+      "title": { "zh-CN": "演示稿提纲", "en": "Deck outline" },
+      "description": "Shape a deck around one decision: what the audience must approve, which numbers prove it, and what to cut.",
+      "tags": ["starter", "deck", "story"],
+      "triggers": ["演示稿", "汇报", "PPT", "deck"],
+      "license": "MIT",
+      "runtime": "source-ready",
+      "path": "vendor/open-design/skills/deck-outline",
+      "files": ["vendor/open-design/skills/deck-outline/SKILL.md"]
+    }
+  ]
+}

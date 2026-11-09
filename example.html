@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>董事会预读 · 续费率</title>
+<meta name="description" content="六页决策型 deck 模板：封面、三个数字、诊断、方案、指标、要批准的一件事。演示内容。" />
+<meta property="og:image" content="./og.png" />
+<style>
+  /* 16:9 deck 模板。每页固定 1280×720；打印时一页一个 <section>，靠 break-after 分页。
+     poster 式版式按 design-rules 第 2 节不套营销页留白规则，但字号仍取数值表、颜色 4 个。 */
+  :root {
+    --navy: #0b1b33;
+    --cream: #f5f1e6;
+    --dim: #a9b4c4;
+    --gold: #e8b23a;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--navy); }
+  body {
+    color: var(--cream);
+    font-family: "Geist", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+  }
+  .deck { display: block; }
+  .slide {
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: var(--navy);
+    color: var(--cream);
+    position: relative;
+  }
+  .slide.light { background: var(--cream); color: var(--navy); }
+  .kicker {
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin: 0 0 24px;
+  }
+  .light .kicker { color: #5a5f66; }
+  h1 { margin: 0; font-size: 60px; font-weight: 600; line-height: 1.1; max-width: 1000px; }
+  h2 { margin: 0 0 32px; font-size: 48px; font-weight: 600; line-height: 1.2; }
+  h3 { margin: 0; font-size: 24px; font-weight: 600; }
+  p { margin: 0; }
+  .lede { margin-top: 24px; font-size: 24px; line-height: 1.6; color: var(--dim); max-width: 800px; }
+  .light .lede { color: #5a5f66; }
+  .foot { position: absolute; left: 80px; right: 80px; bottom: 40px; display: flex; justify-content: space-between; font-size: 14px; color: var(--dim); }
+  .light .foot { color: #5a5f66; }
+
+  .figures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 48px; }
+  .figure .n { font-size: 96px; font-weight: 600; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+  .figure .k { margin-top: 12px; font-size: 18px; color: var(--dim); }
+
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; margin-top: 40px; }
+  .cols h3 { color: var(--gold); margin-bottom: 16px; }
+  ul { margin: 0; padding-left: 24px; }
+  li { margin-top: 12px; font-size: 20px; }
+
+  ol.steps { margin: 40px 0 0; padding: 0; list-style: none; display: grid; gap: 32px; }
+  ol.steps li { display: grid; grid-template-columns: 80px 1fr; gap: 24px; margin: 0; align-items: start; }
+  .num { font-size: 48px; font-weight: 600; color: var(--gold); line-height: 1; font-variant-numeric: tabular-nums; }
+  ol.steps p { margin-top: 8px; font-size: 18px; color: var(--dim); }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 20px; }
+  th, td { padding: 16px 16px 16px 0; text-align: left; border-bottom: 1px solid rgba(245, 241, 230, 0.2); }
+  th { font-size: 14px; font-weight: 500; color: var(--dim); }
+
+  .options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 40px; }
+  .option { padding: 24px; border: 1px solid rgba(245, 241, 230, 0.24); border-radius: 12px; }
+  .option.pick { border-color: var(--gold); }
+  .option h3 { font-size: 20px; }
+  .option p { margin-top: 12px; font-size: 16px; color: var(--dim); }
+  .ask { margin-top: 40px; padding: 24px; background: var(--gold); color: var(--navy); border-radius: 12px; font-size: 24px; font-weight: 600; }
+
+  @media print {
+    html, body { margin: 0; padding: 0; background: var(--navy); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .deck { display: block; padding: 0; gap: 0; }
+    .slide { break-after: page; page-break-after: always; }
+    .slide:last-child { break-after: auto; page-break-after: auto; }
+  }
+</style>
+</head>
+<body>
+  <div class="deck">
+    <!-- 封面 -->
+    <section class="slide">
+      <p class="kicker">FY26 Q3 · 董事会预读 · 第 01 页</p>
+      <h1>续费率从 78% 到 91%，<br />只需要改一件事。</h1>
+      <p class="lede">本页材料只回答一个问题：要不要把客户成功团队从「救火」改成「按签约月份分片负责」。第 6 页是需要你批准的那一条。</p>
+      <div class="foot"><span>Section 01 · 结论先行</span><span>Confidential</span></div>
+    </section>
+
+    <!-- 三个数字 -->
+    <section class="slide light">
+      <p class="kicker">第 02 页 · 现状</p>
+      <h2>三个数字说明问题不在产品</h2>
+      <div class="figures">
+        <div class="figure"><div class="n">78%</div><div class="k">12 个月续费率，连续两季下滑</div></div>
+        <div class="figure"><div class="n">41%</div><div class="k">首次续费前的工单属于「不会用」</div></div>
+        <div class="figure"><div class="n">¥ 2.4M</div><div class="k">本季度因流失少收的 ARR</div></div>
+      </div>
+      <div class="foot"><span>Section 02 · 现状</span><span>数据口径：2025.10–2026.03 签约客户</span></div>
+    </section>
+
+    <!-- 诊断 -->
+    <section class="slide">
+      <p class="kicker">第 03 页 · 诊断</p>
+      <h2>不是客户不想续，是没人按月份管</h2>
+      <div class="cols">
+        <div>
+          <h3>看到的现象</h3>
+          <ul>
+            <li>续费前 30 天才有人联系</li>
+            <li>同一客户三个季度换四个对接人</li>
+            <li>工单解决完就关，没有复盘</li>
+          </ul>
+        </div>
+        <div>
+          <h3>背后的原因</h3>
+          <ul>
+            <li>客户成功按行业分工，不看签约月份</li>
+            <li>没有「签约满 3 个月必须回访」的硬节点</li>
+            <li>续费动作归销售，使用情况归成功，两边不通气</li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot"><span>Section 03 · 诊断</span><span>来源：2026.02 客户访谈 18 家</span></div>
+    </section>
+
+    <!-- 方案 -->
+    <section class="slide light">
+      <p class="kicker">第 04 页 · 方案</p>
+      <h2>按签约月份分片，三个硬节点</h2>
+      <ol class="steps">
+        <li><span class="num">01</span><div><h3>第 30 天：跑通一次真实业务</h3><p>不是培训，是客户自己用自己的一条数据跑完，成功团队只旁观。</p></div></li>
+        <li><span class="num">02</span><div><h3>第 90 天：复盘一次没解决的事</h3><p>把工单里反复出现的三类问题拉出来，产品与成功一起定处理顺序。</p></div></li>
+        <li><span class="num">03</span><div><h3>第 300 天：提前谈续费</h3><p>续费谈判从到期前 30 天提前到 60 天，用使用数据开场而不是用折扣开场。</p></div></li>
+      </ol>
+      <div class="foot"><span>Section 04 · 方案</span><span>试点范围：2026 Q4 起新签客户</span></div>
+    </section>
+
+    <!-- 指标 -->
+    <section class="slide">
+      <p class="kicker">第 05 页 · 怎么算成功</p>
+      <h2>四个指标，两个季度看一次</h2>
+      <table>
+        <thead><tr><th scope="col">指标</th><th scope="col">现在</th><th scope="col">12 个月后</th><th scope="col">口径</th></tr></thead>
+        <tbody>
+          <tr><td>12 个月续费率</td><td>78%</td><td>91%</td><td>按合同金额加权</td></tr>
+          <tr><td>首续前工单占比</td><td>41%</td><td>22%</td><td>「不会用」类工单 / 全部工单</td></tr>
+          <tr><td>第 30 天跑通率</td><td>未统计</td><td>85%</td><td>客户独立完成一次真实业务</td></tr>
+          <tr><td>续费提前量</td><td>30 天</td><td>60 天</td><td>首次续费沟通距到期天数</td></tr>
+        </tbody>
+      </table>
+      <div class="foot"><span>Section 05 · 指标</span><span>基线：2026.03 财务与工单系统导出</span></div>
+    </section>
+
+    <!-- 决策 -->
+    <section class="slide light">
+      <p class="kicker">第 06 页 · 需要批准</p>
+      <h2>三个选项，建议选 B</h2>
+      <div class="options">
+        <div class="option"><h3>A · 维持现状</h3><p>不动组织，只加提醒工具。成本最低，续费率大概率继续往下走。</p></div>
+        <div class="option pick"><h3>B · 按月份分片试点</h3><p>两个成功经理带 40 家新签客户，跑两个季度看第 30 天跑通率。</p></div>
+        <div class="option"><h3>C · 全量改组</h3><p>一次换掉分工方式，见效快但风险集中在同一个季度。</p></div>
+      </div>
+      <div class="ask">请批准 B：新增 2 个客户成功席位，预算 ¥ 46 万 / 年，试点两个季度后复盘。</div>
+      <div class="foot"><span>Section 06 · 决策</span><span>Confidential</span></div>
+    </section>
+  </div>
+</body>
+</html>

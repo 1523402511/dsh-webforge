@@ -1,13 +1,16 @@
 /**
  * dsh-webforge — 把本地网页素材库变成 DSH 工具
  *
- * 只读 eac-design-world 里的 open-design 目录：
- *   176 个网站模板（真实 HTML）· 152 套设计体系（tokens.css）· 169 个技能 · 94 个动效参考
+ * 库来源（按优先级）：WEBFORGE_LIB → 同级 eac-design-world → ~/.dsh/profiles/<名>/node_modules
+ *   → 包内 library/（起步库，随包分发，保证装完可用）
+ *   完整库：176 个网站模板 · 77 个 deck · 152 套设计体系 · 169 个技能
+ *   起步库：4 模板 · 2 deck · 2 体系 · 2 技能
  *
- * 三个工具：
+ * 四个工具：
  *   webforge_search  搜库（按关键词/类型/就绪状态）
- *   webforge_read    读某一条的正文（模板 HTML / 体系 tokens+DESIGN / 技能 SKILL.md）
+ *   webforge_read    读某一条的正文（模板 HTML / 体系 tokens+DESIGN / 技能 SKILL.md / deck 页数）
  *   webforge_build   模板 + 体系 + 内容 → 拼一份能打开的初稿，写到磁盘
+ *   webforge_export  deck / 页面 → 本机 Edge/Chrome 无头打印 PDF
  *
  * 零依赖：只用 node 内置模块；不启动服务、不联网。
  */
@@ -21,20 +24,32 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 
 export const name = 'webforge';
-export const version = '0.1.0';
+export const version = '0.3.0';
 export const inject = ['tools', 'systemPrompt'];
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ZH = 'zh-CN';
 const MAX_READ = 20000;
+const BUNDLED_LIB = path.join(HERE, 'library');
+const DEFAULT_OUT = process.env.WEBFORGE_OUT || path.join(os.homedir(), 'webforge', '网站');
 
 /* ------------------------------------------------------------------ 定位源库 */
+function profileLibraries() {
+  const root = path.join(os.homedir(), '.dsh', 'profiles');
+  const out = [];
+  try {
+    for (const name of fs.readdirSync(root)) out.push(path.join(root, name, 'node_modules', 'eac-design-world'));
+  } catch { /* 没有 profiles 目录就跳过 */ }
+  return out;
+}
+
 function findLibrary() {
   const cands = [
     process.env.WEBFORGE_LIB,
     path.join(HERE, '..', 'eac-design-world'),
-    path.join(os.homedir(), '.dsh', 'profiles', 'desktop', 'node_modules', 'eac-design-world'),
+    ...profileLibraries(),
     'D:\\Deepseek\\resources\\app.asar\\node_modules\\eac-design-world',
+    BUNDLED_LIB,
   ].filter(Boolean);
   for (const c of cands) {
     if (fs.existsSync(path.join(c, 'vendor', 'open-design', 'catalog.json'))) return c;
@@ -100,31 +115,46 @@ const safeName = (s) => {
 };
 
 /* ------------------------------------------------------------------ 建索引 */
-const MG = [
-  ['01-flat-vector', '扁平矢量', 1], ['02-line-art', '线条艺术', 1], ['03-isometric', '等距城市', 1],
-  ['04-3d-render', '柔感三维', 0], ['05-cel-boil', '逐帧手绘', 1], ['06-collage', '杂志拼贴', 1],
-  ['07-liquid', '流体运动', 1], ['08-morph', '形态变换', 1], ['09-bauhaus', '几何包豪斯', 1],
-  ['10-synthwave', '复古合成波', 1], ['12-aurora-glass', '极光玻璃', 1], ['18-hanazi', '综艺花字', 0],
-  ['19-paperclip', '贴纸解说', 1], ['20-pixel', '像素世界', 1], ['22-hud', '未来仪表', 1],
-];
+/* 视频生产类技能不进网页库：它们交付的是片子或视频模板，不是网页。
+   animate（UI 动效）与 oil-motion（滚动/指针/拖动驱动的网页动效）保留；
+   fal-generate 也保留——它同时能出图，图像是网页素材。 */
+const VIDEO_SKILLS = new Set([
+  'od-sk-8-bit-orbit-video-template',
+  'od-sk-after-hours-editorial-template',
+  'od-sk-chat-motion-overlay',
+  'od-sk-fal-kling-o3',
+  'od-sk-fal-lip-sync',
+  'od-sk-fal-video-edit',
+  'od-sk-motion-design',
+  'od-sk-sora',
+  'od-sk-swiss-user-research-video-template',
+  'od-sk-venice-video',
+  'od-sk-video-downloader',
+  'od-sk-video-hyperframes',
+  'od-sk-weread-year-in-review-video-template',
+  'od-sk-youtube-clipper',
+  'od-sk-remotion',
+  'od-sk-huashu-art-motion',
+]);
 
 let INDEX = null;
 function index() {
   if (INDEX) return INDEX;
-  if (!LIB) throw new Error('找不到设计库：请确认已安装 eac-design-world，或设置 WEBFORGE_LIB 环境变量指向它的包目录。');
+  if (!LIB) throw new Error('找不到设计库：内置起步库缺失，且没有在本机找到完整库。修复任选一条——① 检查包内 library/vendor/open-design/catalog.json 是否被删除；② 把 WEBFORGE_LIB 指向含 vendor/open-design/catalog.json 的目录（例如 eac-design-world 包目录）；③ 重新从 GitHub 安装本插件。');
   const raw = JSON.parse(fs.readFileSync(path.join(LIB, 'vendor', 'open-design', 'catalog.json'), 'utf8'));
   const items = [];
 
   for (const t of raw.templates || []) {
+    // 只收网页与 deck。motion 是视频动效模板（79 条 OpenDesign 动效 + 15 条 MG 风格片），
+    // 归视频工具；混进来会让人以为这个插件能做片子。
     const isWeb = t.kind === 'website';
-    const isMotion = t.kind === 'motion';
     const isDeck = t.kind === 'deck';
-    if (!isWeb && !isMotion && !isDeck) continue;
+    if (!isWeb && !isDeck) continue;
     const entry = t.entry && t.entry.exists ? t.entry : null;
-    if ((isWeb || isDeck) && !entry) continue;
+    if (!entry) continue;
     items.push({
       id: t.id,
-      kind: isWeb ? 'template' : isMotion ? 'motion' : 'deck',
+      kind: isWeb ? 'template' : 'deck',
       zh: textOf(t.titleI18n) || textOf(t.title) || t.slug,
       en: textOf(t.title, t.slug),
       desc: t.description || '',
@@ -165,6 +195,7 @@ function index() {
   }
 
   for (const s of raw.skills || []) {
+    if (VIDEO_SKILLS.has(s.id)) continue;
     items.push({
       id: s.id,
       kind: 'skill',
@@ -181,31 +212,19 @@ function index() {
     });
   }
 
-  for (const [slug, zh, ok] of MG) {
-    const relEntry = `vendor/mg-styles-15/demos/${slug}/index.html`;
-    if (!exists(relEntry)) continue;
-    items.push({
-      id: `mg-${slug}`,
-      kind: 'motion',
-      zh,
-      en: slug,
-      desc: 'MG 动效风格 demo（可直接播放的 HTML，不是视频）',
-      tags: ['mg-style', 'motion'],
-      license: 'MIT',
-      runtime: ok ? 'source-ready' : 'requires-assets',
-      ready: Boolean(ok),
-      entryPath: relEntry,
-      entryUrl: '/vendor/mg-styles-15/demos/' + slug + '/index.html',
-      rel: `vendor/mg-styles-15/demos/${slug}`,
-      files: [],
-    });
-  }
-
-  const counts = { template: 0, deck: 0, system: 0, skill: 0, motion: 0 };
+  const counts = { template: 0, deck: 0, system: 0, skill: 0 };
   for (const it of items) counts[it.kind]++;
   INDEX = { items, counts, builtAt: new Date().toISOString(), lib: LIB };
   return INDEX;
 }
+
+/* 数 deck 有多少页：先去掉注释、<style>、<script>，再数真正的 <section> 标签——
+   注释或样式里提到 <section> 不算一页，否则页数会虚高、导出告警误报。 */
+const countSlides = (html) => String(html)
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/<style\b[\s\S]*?<\/style>/gi, '')
+  .replace(/<script\b[\s\S]*?<\/script>/gi, '')
+  .match(/<section\b/gi)?.length || 0;
 
 const brief = (it) => ({
   id: it.id,
@@ -218,7 +237,6 @@ const brief = (it) => ({
   runtime: it.runtime,
   ...(it.kind === 'system' ? { modeHint: it.modeHint, colors: it.colors.slice(0, 4) } : {}),
   ...(it.kind === 'template' ? { size: it.w && it.h ? `${it.w}×${it.h}` : null } : {}),
-  ...(it.kind === 'motion' ? { duration: it.dur || null } : {}),
 });
 
 /* 中文需求 → 库里英文描述也认得的词（体系/技能的描述几乎都是英文） */
@@ -275,7 +293,7 @@ function search({ query = '', kind = 'all', limit = 12, readyOnly = false }) {
 
   let hits;
   if (!tokens.length) {
-    const order = { template: 0, deck: 1, system: 2, skill: 3, motion: 4 };
+    const order = { template: 0, deck: 1, system: 2, skill: 3 };
     hits = pool
       .map((it) => ({ it, s: (it.ready ? 2 : 0) - order[it.kind] * 0.1 }))
       .sort((a, b) => b.s - a.s)
@@ -334,13 +352,13 @@ function read({ id, part = 'auto', maxChars = 6000 }) {
   const cap = Math.min(MAX_READ, Math.max(800, Math.floor(Number(maxChars) || 6000)));
   const out = { id: it.id, kind: it.kind, name: it.zh, nameEn: it.en, desc: it.desc, tags: it.tags, license: it.license, runtime: it.runtime };
 
-  if (it.kind === 'template' || it.kind === 'motion' || it.kind === 'deck') {
+  if (it.kind === 'template' || it.kind === 'deck') {
     out.sourcePath = it.entryPath;
     out.sourceDir = it.rel;
     out.files = it.files.slice(0, 20);
     if (it.kind === 'deck') {
       const full = exists(it.entryPath) ? fs.readFileSync(abs(it.entryPath), 'utf8') : '';
-      out.slides = (full.match(/<section\b/gi) || []).length;
+      out.slides = countSlides(full);
       out.printReady = /@media\s+print/i.test(full);
     }
     if (part === 'auto' || part === 'html') out.html = readPlain(it.entryPath, cap);
@@ -407,7 +425,7 @@ function systemRole(system, roleName) {
   return [...hexes].sort((a, b) => chroma(b.value) - chroma(a.value))[0].value;
 }
 
-function build({ template, system = null, title = '', pitch = '', brand = '', lang = 'zh-CN', remap = true, outDir = 'D:\\dsh\\网站' }) {
+function build({ template, system = null, title = '', pitch = '', brand = '', lang = 'zh-CN', remap = true, outDir = DEFAULT_OUT }) {
   const tpl = one(template);
   if (tpl.kind !== 'template') throw new Error(`${template} 不是网站模板（kind=${tpl.kind}），不能拼初稿。`);
   if (!tpl.entryPath) throw new Error('该模板没有可读入口 HTML。');
@@ -540,16 +558,42 @@ function build({ template, system = null, title = '', pitch = '', brand = '', la
 /* ------------------------------------------------------------------ 导出 PDF */
 const BROWSERS = [
   process.env.WF_BROWSER,
+  // Windows
   'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Microsoft\\Edge\\Application\\msedge.exe',
   'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+  // macOS
+  '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+  '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge',
+  '/Applications/Chromium.app/Contents/MacOS/Chromium',
+  // Linux
+  '/usr/bin/google-chrome',
+  '/usr/bin/google-chrome-stable',
+  '/usr/bin/chromium',
+  '/usr/bin/chromium-browser',
+  '/usr/bin/microsoft-edge',
 ].filter(Boolean);
 
+const isFile = (p) => {
+  try { return fs.existsSync(p); } catch { return false; }
+};
+
 function findBrowser() {
-  return BROWSERS.find((p) => {
-    try { return fs.existsSync(p); } catch { return false; }
-  }) || null;
+  const direct = BROWSERS.find(isFile);
+  if (direct) return direct;
+  // 上面没命中就叫 PATH 里找一次（Linux 发行版、Windows 用户目录安装、macOS Homebrew 都在这里）
+  const names = process.platform === 'win32'
+    ? ['msedge.exe', 'chrome.exe']
+    : ['google-chrome', 'google-chrome-stable', 'chromium', 'chromium-browser', 'microsoft-edge'];
+  for (const dir of String(process.env.PATH || '').split(path.delimiter)) {
+    if (!dir) continue;
+    for (const n of names) {
+      const p = path.join(dir, n);
+      if (isFile(p)) return p;
+    }
+  }
+  return null;
 }
 
 function countPdfPages(buf) {
@@ -557,10 +601,10 @@ function countPdfPages(buf) {
   return (s.match(/\/Type\s*\/Page[^s]/g) || []).length;
 }
 
-async function exportDeck({ id, title = '', outDir = 'D:\\dsh\\网站', width = 1280, height = 720, timeout = 90000 }) {
+async function exportDeck({ id, title = '', outDir = DEFAULT_OUT, width = 1280, height = 720, timeout = 90000 }) {
   const it = one(id);
   if (!it.entryPath) throw new Error('这一条没有入口 HTML，导不出 PDF。');
-  if (it.kind !== 'deck' && it.kind !== 'template' && it.kind !== 'motion') throw new Error(`${it.id} 不是页面类素材（kind=${it.kind}）。`);
+  if (it.kind !== 'deck' && it.kind !== 'template') throw new Error(`${it.id} 不是页面类素材（kind=${it.kind}）。`);
   const browser = findBrowser();
   if (!browser) throw new Error('没找到 Edge/Chrome，无法无头打印。可用 WF_BROWSER 环境变量指定浏览器路径。');
 
@@ -599,7 +643,7 @@ async function exportDeck({ id, title = '', outDir = 'D:\\dsh\\网站', width = 
     dir, pdf, deckHtml,
     pages, bytes,
     size: `${w}×${h}`,
-    slides: (patched.match(/<section\b/gi) || []).length,
+    slides: countSlides(patched),
     deck: it.id,
     browser: path.basename(browser),
   };
@@ -623,13 +667,13 @@ const ok = (summary, payload) => ({ summary, details: JSON.stringify(payload, nu
 
 const TOOL_SEARCH = {
   name: 'webforge_search',
-  description: '搜本地网页素材库：176 个网站模板（真实 HTML，可直接预览）、81 个 deck 演示稿（16:9，可导出 PDF）、152 套设计体系（带 tokens.css）、169 个技能、94 个动效/WebGL 参考。用户说要做网页/官网/落地页/看板/文档页，或要做 PPT/演示稿/汇报时，先用它看清有什么可用的版式与体系，再决定用哪套；返回的 id 供 webforge_read / webforge_build / webforge_export 使用。',
+  description: '搜本地网页素材库。本机装了完整库时是 176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9，可导出 PDF）、152 套设计体系（带 tokens.css）、169 个技能；没装完整库时自动用包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），一样能拼能导出。只收网页与 deck：视频动效模板不在这里。用户说要做网页/官网/落地页/看板/文档页，或要做 PPT/演示稿/汇报时，先用它看清有什么可用的版式与体系，再决定用哪套；返回的 id 供 webforge_read / webforge_build / webforge_export 使用。',
   parameters: {
     type: 'object',
     additionalProperties: false,
     properties: {
       query: { type: 'string', description: '关键词，中英文都行：dashboard / 看板 / 极简 / webgl / 中文 / 定价页' },
-      kind: { type: 'string', enum: ['all', 'template', 'deck', 'system', 'skill', 'motion'], description: '限定类型：template 网页 / deck 演示稿 / system 体系 / skill 技能 / motion 动效，默认 all' },
+      kind: { type: 'string', enum: ['all', 'template', 'deck', 'system', 'skill'], description: '限定类型：template 网页 / deck 演示稿 / system 体系 / skill 技能，默认 all' },
       limit: { type: 'number', description: '返回条数 1–40，默认 12' },
       readyOnly: { type: 'boolean', description: '只要 source-ready 的条目' },
     },
@@ -638,13 +682,13 @@ const TOOL_SEARCH = {
   isConcurrencySafe: () => true,
   async execute(args = {}) {
     const r = search(args);
-    return ok(`找到 ${r.total} 条（库：模板 ${r.counts.template} / deck ${r.counts.deck} / 体系 ${r.counts.system} / 技能 ${r.counts.skill} / 动效 ${r.counts.motion}）`, r);
+    return ok(`找到 ${r.total} 条（库：模板 ${r.counts.template} / deck ${r.counts.deck} / 体系 ${r.counts.system} / 技能 ${r.counts.skill}）`, r);
   },
 };
 
 const TOOL_READ = {
   name: 'webforge_read',
-  description: '读一条素材的正文：模板/动效返回入口 HTML 源码与文件清单；设计体系返回 tokens.css、DESIGN.md 与配色字体；技能返回 SKILL.md。写页面前先读，别凭名字猜。源码可能被截断，返回里有完整路径可再用文件工具读。',
+  description: '读一条素材的正文：模板与 deck 返回入口 HTML 源码与文件清单；设计体系返回 tokens.css、DESIGN.md 与配色字体；技能返回 SKILL.md。写页面前先读，别凭名字猜。源码可能被截断，返回里有完整路径可再用文件工具读。',
   parameters: {
     type: 'object',
     additionalProperties: false,
@@ -663,7 +707,7 @@ const TOOL_READ = {
   },
 };
 
-const TOOL_BUILD_DESC = '用「模板 + 设计体系 + 内容」拼一份能直接打开的初稿，写到磁盘（默认 D:\\dsh\\网站\\<标题>-<时间>\\index.html），复制模板资源，返回改了什么、跳过了什么。只替换标题/描述/首个 h1、注入体系 tokens、做有护栏的保守换色——不写文案、不改结构；真正的成品要在初稿基础上继续写。';
+const TOOL_BUILD_DESC = '用「模板 + 设计体系 + 内容」拼一份能直接打开的初稿，写到磁盘（默认 ~/webforge/网站/<标题>-<时间>/index.html，可用 outDir 覆盖），复制模板资源，返回改了什么、跳过了什么。只替换标题/描述/首个 h1、注入体系 tokens、做有护栏的保守换色——不写文案、不改结构；真正的成品要在初稿基础上继续写。';
 
 function buildTool(defaultOutDir) {
   return {
@@ -700,7 +744,7 @@ function exportTool(defaultOutDir) {
       type: 'object',
       additionalProperties: false,
       properties: {
-        id: { type: 'string', description: 'deck / template / motion 的 id' },
+        id: { type: 'string', description: 'deck / template 的 id' },
         title: { type: 'string', description: '输出文件名与目录名用，不传就用素材名' },
         width: { type: 'number', description: '页面宽（px），默认 1280' },
         height: { type: 'number', description: '页面高（px），默认 720' },
@@ -722,18 +766,18 @@ function exportTool(defaultOutDir) {
 
 const PROMPT = `## 网页制作（webforge）
 
-本地有一套可直接用的网页素材库：176 个网站模板（磁盘上真实的 HTML，含 16 个 WebGL/3D 首屏）、81 个 deck 演示稿（16:9、自带页码与打印 CSS）、152 套设计体系（每套带 tokens.css 与字体栈）、169 个技能、94 个动效参考。
+本地有一套可直接用的网页素材库。装了完整库时：176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9、自带页码与打印 CSS）、152 套设计体系（每套带 tokens.css 与字体栈）、169 个技能；没装时自动落到包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），流程一样跑得通。只收网页与 deck，视频动效素材不在这里（要视频请用视频工具）。
 
 用户说「做个网页 / 官网 / 落地页 / 产品页 / 看板 / 文档页 / 个人主页」时，先搜库，别从零凭空写：
 
 1. \`webforge_search\` 看清版式与体系（按用途、行业、气质、3D/WebGL 搜），挑 1 个模板 + 1 套体系；
 2. \`webforge_read\` 读这套的 tokens 与模板 HTML，确认结构、配色变量、字体真的能对上；
 3. \`webforge_build\` 拼出初稿到磁盘（只换标题/描述/配色，不写文案）；
-4. 在初稿上继续写：换真实文案、补结构、做响应式，再按 D:\\dsh\\design-rules\\WEB-DESIGN-RULES.md 的 page 剖面检查，floor 清零。
+4. 在初稿上继续写：换真实文案、补结构、做响应式，再按工作区里的网页设计规范（若有 design-rules/WEB-DESIGN-RULES.md）过一遍 page 剖面，floor 清零。
 
 用户说「做个 PPT / 演示稿 / 汇报 / 路演 / 董事会预读」时，走 deck 这条线：
 
-1. \`webforge_search\` 传 kind: "deck" 挑版式（81 个，决策型 deck 居多）；
+1. \`webforge_search\` 传 kind: "deck" 挑版式（完整库 77 个，起步库 2 个；决策型 deck 居多）；
 2. \`webforge_read\` 先看 slides（几页）与 printReady，再读 HTML，按页替换文案；
 3. \`webforge_export\` 打 16:9 PDF（默认 1280×720），返回页数与体积；页数应等于 section 数，不等就要查断页。
 
@@ -743,7 +787,7 @@ const PROMPT = `## 网页制作（webforge）
 
 /* ------------------------------------------------------------------ 插件入口 */
 export function apply(ctx, config = {}) {
-  const outDir = config.outDir || 'D:\\dsh\\网站';
+  const outDir = config.outDir || DEFAULT_OUT;
   const tools = [TOOL_SEARCH, TOOL_READ, buildTool(outDir), exportTool(outDir)];
 
   for (const tool of tools) {

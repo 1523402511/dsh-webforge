@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>文档模板 · 三分钟接入</title>
+<meta name="description" content="文档页模板：左侧目录、正文、代码块与参数表。适合接入说明、API 参考、内部手册。" />
+<meta property="og:image" content="./og.png" />
+<style>
+  /* 文档页：左侧固定目录 + 右侧正文。行长按规范第 6 节控制在 640–840px。 */
+  :root {
+    --ink: #14161a;
+    --ink-muted: #5a5f66;
+    --paper: #ffffff;
+    --surface: #f4f5f7;
+    --line: #e3ded2;
+    --accent: #2f6feb;
+    --code-ink: #1f1f1f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #14161a;
+    font-family: "Geist", "Noto Sans SC", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+  a { color: var(--accent); }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); }
+  .side { padding: 32px 24px; border-right: 1px solid var(--line); }
+  .side .title { font-size: 20px; font-weight: 600; margin: 0 0 24px; }
+  .side nav { display: grid; gap: 4px; }
+  .side a { display: block; padding: 4px 8px; border-radius: 6px; color: var(--ink-muted); text-decoration: none; font-size: 14px; }
+  .side a[aria-current="page"] { color: var(--ink); background: var(--surface); font-weight: 500; }
+  .side a:focus-visible, main a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .side .group { margin: 16px 0 4px; padding: 0 8px; font-size: 12px; color: var(--ink-muted); }
+
+  main { padding: 48px 32px 80px; max-width: 840px; }
+  h1 { margin: 0; font-size: 36px; font-weight: 600; line-height: 1.2; }
+  .lede { margin-top: 12px; color: var(--ink-muted); }
+  h2 { margin: 48px 0 8px; font-size: 24px; font-weight: 600; line-height: 1.2; }
+  h3 { margin: 24px 0 8px; font-size: 18px; font-weight: 600; }
+  p { margin: 8px 0 0; }
+  ul { margin: 8px 0 0; padding-left: 24px; }
+  li { margin-top: 4px; }
+
+  pre { margin: 16px 0 0; padding: 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); overflow-x: auto; }
+  code { font-family: ui-monospace, "SFMono-Regular", "Noto Sans Mono", monospace; font-size: 14px; color: var(--code-ink); }
+  p code { padding: 2px 4px; border-radius: 4px; background: var(--surface); }
+
+  table { width: 100%; margin-top: 16px; border-collapse: collapse; font-size: 14px; }
+  th, td { padding: 8px 8px 8px 0; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-weight: 600; font-size: 12px; color: var(--ink-muted); }
+
+  .note { margin-top: 24px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  .note strong { display: block; margin-bottom: 4px; }
+
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+    .side { border-right: 0; border-bottom: 1px solid var(--line); padding: 24px; }
+    main { padding: 32px 24px 64px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="side">
+      <p class="title">接入文档</p>
+      <nav aria-label="目录">
+        <a href="#" aria-current="page">快速开始</a>
+        <a href="#">认证</a>
+        <a href="#">错误码</a>
+        <div class="group">参考</div>
+        <a href="#">REST API</a>
+        <a href="#">Webhook</a>
+        <a href="#">SDK</a>
+      </nav>
+    </aside>
+
+    <main>
+      <h1>三分钟接入</h1>
+      <p class="lede">装 SDK、配一个环境变量、发一次请求。下面每一步都能单独跑通。</p>
+
+      <h2>1. 安装</h2>
+      <p>支持 Node 20 及以上。包本身零依赖，不会带进构建链。</p>
+      <pre><code>npm install @example/sdk
+node -e "console.log(require('@example/sdk').version)"</code></pre>
+
+      <h2>2. 配置密钥</h2>
+      <p>密钥只从环境变量读，不写进代码，也不进仓库。</p>
+      <pre><code># .env.local
+EXAMPLE_API_KEY=sk_live_xxx</code></pre>
+
+      <h2>3. 发第一次请求</h2>
+      <pre><code>import { createClient } from '@example/sdk'
+
+const client = createClient()
+const account = await client.accounts.get('acct_123')
+console.log(account.plan) // "team"</code></pre>
+
+      <h3>参数</h3>
+      <table>
+        <thead><tr><th scope="col">字段</th><th scope="col">类型</th><th scope="col">说明</th></tr></thead>
+        <tbody>
+          <tr><td><code>id</code></td><td>string</td><td>账户 ID，前缀 <code>acct_</code>。</td></tr>
+          <tr><td><code>expand</code></td><td>string[]</td><td>要展开的关联对象，逗号分隔。</td></tr>
+          <tr><td><code>timeout</code></td><td>number</td><td>毫秒，默认 10000。</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <strong>密钥泄漏了怎么办</strong>
+        <p>在控制台吊销旧密钥再发新的；吊销立即生效，历史请求日志仍可查 30 天。</p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
