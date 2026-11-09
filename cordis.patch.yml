@@ -1,0 +1,12 @@
+# dsh-webforge bundle patch
+#
+# 这一层把插件挂到宿主的 Cordis 树上。安装为 bundle 时由 dsh 自动并入；
+# 本地 link 开发时，也可以把下面两行手动加进
+# $DSH_HOME/profiles/<name>/cordis.patch.yml（该文件被 watch，改对即重组）。
+#
+# 注意：patch 文件不能是空的或只有注释——loader 会启动失败。
+- insert:
+    - id: webforge
+      name: 'dsh-webforge'
+      config:
+        outDir: 'D:\dsh\网站'

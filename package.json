@@ -1,0 +1,34 @@
+{
+  "name": "dsh-webforge",
+  "version": "0.1.0",
+  "description": "把本地网页素材库（176 模板 / 152 体系 / 169 技能 / 94 动效）做成 DSH 工具：搜库、读设计体系、拼初稿。零依赖，只读源库。",
+  "type": "module",
+  "main": "./plugin.mjs",
+  "exports": {
+    ".": "./plugin.mjs",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "deepseek",
+    "harness",
+    "dsh",
+    "dsh-plugin",
+    "web",
+    "design-system",
+    "template"
+  ],
+  "files": [
+    "plugin.mjs",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
