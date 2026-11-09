@@ -700,7 +700,7 @@ function exportTool(defaultOutDir) {
       type: 'object',
       additionalProperties: false,
       properties: {
-        id: { type: 'string', description: 'deck / template / motion 的 id', required: true },
+        id: { type: 'string', description: 'deck / template / motion 的 id' },
         title: { type: 'string', description: '输出文件名与目录名用，不传就用素材名' },
         width: { type: 'number', description: '页面宽（px），默认 1280' },
         height: { type: 'number', description: '页面高（px），默认 720' },
