@@ -3,7 +3,7 @@
  *
  * 库来源（按优先级）：WEBFORGE_LIB → 同级 eac-design-world → ~/.dsh/profiles/<名>/node_modules
  *   → 包内 library/（起步库，随包分发，保证装完可用）
- *   完整库：176 个网站模板 · 77 个 deck · 152 套设计体系 · 169 个技能
+ *   完整库：176 个网站模板 · 77 个 deck · 152 套设计体系 · 153 个技能
  *   起步库：4 模板 · 2 deck · 2 体系 · 2 技能
  *
  * 四个工具：
@@ -24,7 +24,7 @@ import { promisify } from 'node:util';
 const execFileAsync = promisify(execFile);
 
 export const name = 'webforge';
-export const version = '0.3.0';
+export const version = '0.3.1';
 export const inject = ['tools', 'systemPrompt'];
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -667,7 +667,7 @@ const ok = (summary, payload) => ({ summary, details: JSON.stringify(payload, nu
 
 const TOOL_SEARCH = {
   name: 'webforge_search',
-  description: '搜本地网页素材库。本机装了完整库时是 176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9，可导出 PDF）、152 套设计体系（带 tokens.css）、169 个技能；没装完整库时自动用包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），一样能拼能导出。只收网页与 deck：视频动效模板不在这里。用户说要做网页/官网/落地页/看板/文档页，或要做 PPT/演示稿/汇报时，先用它看清有什么可用的版式与体系，再决定用哪套；返回的 id 供 webforge_read / webforge_build / webforge_export 使用。',
+  description: '搜本地网页素材库。本机装了完整库时是 176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9，可导出 PDF）、152 套设计体系（带 tokens.css）、153 个技能；没装完整库时自动用包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），一样能拼能导出。只收网页与 deck：视频动效模板不在这里。用户说要做网页/官网/落地页/看板/文档页，或要做 PPT/演示稿/汇报时，先用它看清有什么可用的版式与体系，再决定用哪套；返回的 id 供 webforge_read / webforge_build / webforge_export 使用。',
   parameters: {
     type: 'object',
     additionalProperties: false,
@@ -766,7 +766,7 @@ function exportTool(defaultOutDir) {
 
 const PROMPT = `## 网页制作（webforge）
 
-本地有一套可直接用的网页素材库。装了完整库时：176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9、自带页码与打印 CSS）、152 套设计体系（每套带 tokens.css 与字体栈）、169 个技能；没装时自动落到包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），流程一样跑得通。只收网页与 deck，视频动效素材不在这里（要视频请用视频工具）。
+本地有一套可直接用的网页素材库。装了完整库时：176 个网站模板（真实 HTML，含 16 个 WebGL/3D 首屏）、77 个 deck（16:9、自带页码与打印 CSS）、152 套设计体系（每套带 tokens.css 与字体栈）、153 个技能；没装时自动落到包内起步库（4 模板 / 2 deck / 2 体系 / 2 技能），流程一样跑得通。只收网页与 deck，视频动效素材不在这里（要视频请用视频工具）。
 
 用户说「做个网页 / 官网 / 落地页 / 产品页 / 看板 / 文档页 / 个人主页」时，先搜库，别从零凭空写：
 
